@@ -1,0 +1,42 @@
+/* assets/css/GestionTournois/pageTournoi.css */
+
+/* Conteneur principal */
+.page-tournoi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;            /* espace vertical entre les éléments */
+  padding: 2rem;          /* marge intérieure globale */
+}
+
+/* Titre de la page */
+.page-tournoi .page-title {
+  margin: 0;
+  font-size: 2rem;        /* taille légèrement plus grande */
+  font-weight: 600;       /* semi‑bold */
+  color: var(--u-text-primary);
+}
+
+/* Bouton “Créer un tournoi” */
+.page-tournoi .create-button {
+  align-self: flex-end;   /* pousse le bouton à droite */
+  margin-bottom: 1rem;    /* espace sous le bouton */
+}
+
+/* État “aucun tournoi” */
+.page-tournoi .no-data {
+  text-align: center;
+  color: var(--u-text-muted);
+  font-style: italic;
+  margin-top: 2rem;
+}
+
+/* Responsive utility */
+@media (max-width: 640px) {
+  .page-tournoi {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .page-tournoi .page-title {
+    font-size: 1.5rem;
+  }
+}

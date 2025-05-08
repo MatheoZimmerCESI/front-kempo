@@ -1,0 +1,15 @@
+
+/* assets/css/GestionTournois/updateTournoi.css */
+
+/* Icône “Modifier” */
+.update-icon {
+    padding: 0.25rem;
+    border-radius: var(--u-border-radius-full);
+    transition: background-color 0.2s;
+  }
+  
+  .update-icon:hover {
+    background-color: var(--u-bg-muted);
+  }
+  
+  

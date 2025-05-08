@@ -1,0 +1,21 @@
+/* assets/css/GestionTournois/deleteTournoi.css */
+
+/* Conserve l’alignement et l’espacement des icônes */
+.tournoi-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  /* Classe à appliquer sur le bouton poubelle */
+  .delete-button {
+    padding: 0.25rem;
+    border-radius: var(--u-border-radius-full);
+    transition: background-color 0.2s;
+  }
+  
+  /* Même effet hover que le bouton Modifier */
+  .delete-button:hover {
+    background-color: var(--u-bg-muted);
+  }
+  
