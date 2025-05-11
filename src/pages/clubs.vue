@@ -1,14 +1,14 @@
 <!-- src/pages/clubs.vue -->
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">Liste des Clubs</h1>
+  <section class="p-6">
+    <h1 class="text-2xl font-bold mb-4">Liste des clubs</h1>
 
     <!-- Barre de recherche -->
     <UInput
       v-model="search"
       placeholder="Rechercher un club…"
       clearable
-      class="mb-4 max-w-md"
+      class="mb-6 max-w-md"
     />
 
     <!-- Indicateur de chargement -->
@@ -21,24 +21,32 @@
       {{ error }}
     </div>
 
-    <!-- Liste des clubs filtrée -->
+    <!-- Liste des clubs -->
     <div v-else>
       <div v-if="filteredClubs.length === 0" class="text-gray-600 text-center">
         Aucun club trouvé.
       </div>
 
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card
+      <ul v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <li
           v-for="club in filteredClubs"
           :key="club.id"
-          hoverable
-          class="p-4"
         >
-          <CardTitle>{{ club.name }}</CardTitle>
-        </Card>
-      </div>
+          <UCard hoverable class="p-4">
+            <div class="flex justify-between items-center">
+              <h2 class="text-lg font-semibold">{{ club.name }}</h2>
+              <NuxtLink
+                :to="`/clubs/${club.id}`"
+                class="text-primary-600 hover:underline text-sm"
+              >
+                Détails
+              </NuxtLink>
+            </div>
+          </UCard>
+        </li>
+      </ul>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -46,19 +54,18 @@ import { ref, onMounted, computed } from 'vue'
 import { getClubs } from '~/services/club'
 import type { Club } from '~/types/club'
 
-// Composants Nuxt UI auto-importés:
-// UInput, Card, CardTitle, Loading
-
 const search = ref('')
 const clubs = ref<Club[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
+  loading.value = true
+  error.value = null
   try {
     clubs.value = await getClubs()
   } catch (e: any) {
-    error.value = e.message || 'Erreur lors du chargement des clubs.'
+    error.value = e.data?.message || 'Erreur lors du chargement des clubs.'
   } finally {
     loading.value = false
   }
@@ -67,8 +74,15 @@ onMounted(async () => {
 const filteredClubs = computed((): Club[] => {
   const term = search.value.trim().toLowerCase()
   if (!term) return clubs.value
-  return clubs.value.filter((c: Club) =>
+  return clubs.value.filter(c =>
     c.name.toLowerCase().includes(term)
   )
 })
 </script>
+
+<style scoped>
+section {
+  max-width: 960px;
+  margin: auto;
+}
+</style>

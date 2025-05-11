@@ -26,19 +26,19 @@
       </NuxtLink>
 
       <NuxtLink
+        v-if="isUser || isGestionnaire || isAdmin"
+        to="/categorie"
+        class="text-gray-700 hover:text-primary"
+      >
+        Liste des Categories
+      </NuxtLink>
+
+      <NuxtLink
         v-if="isUser"
         to="/matchs"
         class="text-gray-700 hover:text-primary"
       >
         Mes Matchs
-      </NuxtLink>
-
-      <NuxtLink
-        v-if="isGestionnaire || isAdmin"
-        to="/categorie"
-        class="text-gray-700 hover:text-primary"
-      >
-        Catégories
       </NuxtLink>
 
       <NuxtLink
