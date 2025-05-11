@@ -11,8 +11,8 @@
       variant="solid"
       color="primary"
     >
-     <!-- Bandeau bleu autour du logo -->
-     <div class="flex justify-center mb-6">
+      <!-- Bandeau bleu autour du logo -->
+      <div class="flex justify-center mb-6">
         <div class="bg-[#2C3E50] p-4 rounded-full">
           <img
             src="~/assets/css/logo/logo_background_scoreboard_version_1.png"
@@ -43,13 +43,13 @@
           required
           color="primary"
         />
-        
+
         <div class="flex justify-between text-sm text-gray-600">
           <NuxtLink to="/forgot-password" class="underline hover:text-gray-800">
             Mot de passe oublié ?
           </NuxtLink>
           <NuxtLink to="/login" class="underline hover:text-gray-800">
-          Se connecter
+            Se connecter
           </NuxtLink>
         </div>
 
@@ -57,8 +57,6 @@
           {{ loading ? 'Inscription…' : "S'inscrire" }}
         </UButton>
 
-
-       
         <!-- Bouton Invité -->
         <NuxtLink to="/dashboard">
           <UButton variant="outline" color="primary" block>
@@ -71,15 +69,22 @@
         </p>
       </form>
     </UCard>
+
+    <!-- Modales -->
+    <ForgotPasswordModal v-model:open="showForgot" />
+    <HelpModal />
   </section>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
+
 import { ref } from 'vue'
-import { useCookie, navigateTo, useState } from '#app'
+import { useCookie, navigateTo } from '#app'
 import { register } from '~/services/auth'
 import type { AuthResponse } from '~/types/auth'
+import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal.vue'
+import HelpModal from '../components/HelpModal.vue'
 
 // Données réactives
 const email = ref('')
@@ -88,24 +93,20 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const tokenCookie = useCookie<string | null>('token')
 
-type UserState = { userId: number; roles: string[] } | null
+// Contrôle de l’ouverture de la modale Mot de passe oublié
+const showForgot = ref(false)
 
 // Soumission du formulaire d'inscription
 async function onSubmit() {
   loading.value = true
   error.value = null
   try {
-    // Appel login et récupération du token
-    const { token } = (await login(email.value, password.value)) as AuthResponse
+    const { token } = (await register(email.value, password.value)) as AuthResponse
     tokenCookie.value = token
-
-    // Petit délai pour que le plugin hydrate le cookie
     await new Promise(r => setTimeout(r, 50))
-
-    // Redirection unique vers le dashboard
     navigateTo('/dashboard')
   } catch (err: any) {
-    error.value = err.data?.message || 'Identifiants incorrects'
+    error.value = err.data?.message || 'Erreur lors de l’inscription'
   } finally {
     loading.value = false
   }

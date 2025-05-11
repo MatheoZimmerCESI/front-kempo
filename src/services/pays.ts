@@ -1,4 +1,3 @@
-// src/services/pays.ts
 import { useApi } from '~/components/auth/useApi'
 import type { Pays } from '~/types/pays'
 

@@ -1,13 +1,13 @@
 export interface Match {
-	id?: number
-	id_tournoi: number
-	id_poule?:             number | null
-	id_competiteur1: number
-	id_competiteur2: number
-	score1: number
-	score2: number
-	keikoku_competiteur1: number
-	keikoku_competiteur2: number
-	is_finished: boolean 	/** Indique si le match est terminé */
+	id: number;
+	tournoiId: number;
+	pouleId?: number | null;
+	competitor1Id: number;
+	competitor2Id: number;
+	score1: number;
+	score2: number;
+	keikokuCompetiteur1: number;
+	keikokuCompetiteur2: number;
+	isFinished: boolean;
   }
   

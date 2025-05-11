@@ -23,7 +23,7 @@
       </template>
 
       <template #footer>
-        <UButton color="danger" @click="confirmDelete">
+        <UButton color="error" @click="confirmDelete">
           Supprimer
         </UButton>
         <UButton variant="ghost" @click="open = false">

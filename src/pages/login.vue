@@ -39,40 +39,51 @@
         />
 
         <div class="flex justify-between text-sm text-gray-600">
-          <NuxtLink to="/forgot-password" class="underline hover:text-gray-800">
+          <!-- Bouton Mot de passe oublié -->
+          <button
+            type="button"
+            class="underline hover:text-gray-800"
+            @click="showForgot = true"
+          >
             Mot de passe oublié ?
-          </NuxtLink>
+          </button>
           <NuxtLink to="/register" class="underline hover:text-gray-800">
             Pas de compte ?
           </NuxtLink>
         </div>
+
         <UButton type="submit" color="primary" variant="solid" block :disabled="loading">
           {{ loading ? 'Connexion…' : 'Se connecter' }}
         </UButton>
 
-                <!-- Bouton Invité -->
-                <NuxtLink to="/dashboard">
+        <!-- Bouton Invité -->
+        <NuxtLink to="/dashboard">
           <UButton variant="outline" color="primary" block>
             Invité
           </UButton>
         </NuxtLink>
-
-
 
         <p v-if="error" class="text-red-500 text-center mt-2">
           {{ error }}
         </p>
       </form>
     </UCard>
+
+    <!-- Modales -->
+    <ForgotPasswordModal v-model:open="showForgot" />
+    <HelpModal />
   </section>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
+
 import { ref } from 'vue'
-import { useCookie, navigateTo, useState } from '#app'
+import { useCookie, navigateTo } from '#app'
 import { login } from '~/services/auth'
 import type { AuthResponse } from '~/types/auth'
+import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal.vue'
+import HelpModal from '../components/HelpModal.vue'
 
 // Données réactives
 const email = ref('')
@@ -81,24 +92,29 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const tokenCookie = useCookie<string | null>('token')
 
-type UserState = { userId: number; roles: string[] } | null
+// Contrôle de l’ouverture de la modale Mot de passe oublié
+const showForgot = ref(false)
 
 // Soumission du formulaire de login 
 async function onSubmit() {
   loading.value = true
   error.value = null
   try {
-    // Appel login et récupération du token
     const { token } = (await login(email.value, password.value)) as AuthResponse
     tokenCookie.value = token
-
-    // Petit délai pour que le plugin hydrate le cookie
+    // petit délai pour hydrater le cookie
     await new Promise(r => setTimeout(r, 50))
-
-    // Redirection unique vers le dashboard
     navigateTo('/dashboard')
   } catch (err: any) {
-    error.value = err.data?.message || 'Identifiants incorrects'
+      // Message d’erreur plus utilisateur
+      // Si l'API renvoie 403, c'est qu'il s'agit d'un compte désactivé ou supprimé
+     if (err.response?.status === 403 || err.data?.message === 'Compte inactif ou supprimé') {
+       error.value = 'Votre compte est désactivé. Pour le réactiver, utilisez le bouton Aide sur la page de connexion.'
+     } else {
+       // Erreur classique d'authentification
+       error.value = 'Adresse e-mail ou mot de passe invalide. Vérifiez vos informations.'
+     }
+    
   } finally {
     loading.value = false
   }

@@ -1,13 +1,16 @@
+// src/types/competiteur.ts
+
 export interface Competiteur {
-	id?: number;
-	firstname: string;
-	surname: string;
-	birthday: string;
-	sex: string;
-	weight: number;
-	id_club: number;
-	id_country: number;
-	id_grade: number;
-	email: string
-	userId: number
-}
+	id?:        number
+	firstname:  string
+	surname:    string
+	birthday?:  string      // 'YYYY-MM-DD' ou vide
+	sex?:       'M' | 'F'
+	weight?:    number
+	countryId?: number
+	clubId?:    number
+	gradeId?:   number
+	email:      string
+	userId:     number
+  }
+  

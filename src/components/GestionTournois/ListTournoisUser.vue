@@ -22,26 +22,26 @@
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Date de début :</span>
-          <span class="detail-value">{{ formatDate(tournoi.date_debut) }}</span>
+          <span class="detail-value">{{ formatDate(tournoi.dateDebut) }}</span>
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Date de fin :</span>
-          <span class="detail-value">{{ formatDate(tournoi.date_fin) }}</span>
+          <span class="detail-value">{{ formatDate(tournoi.dateFin) }}</span>
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Système d’élimination :</span>
-          <span class="detail-value capitalize">{{ tournoi.systemeElimination }}</span>
+          <span class="detail-value">{{ tournoi.systemeElimination.trim() }}</span>
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Catégorie :</span>
           <span class="detail-value">
-            {{ categorieMap[tournoi.id_categorie] ?? '—' }}
+            {{ categorieMap[tournoi.categorieId] ?? '—' }}
           </span>
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Pays :</span>
           <span class="detail-value">
-            {{ paysMap[tournoi.id_pays] ?? '—' }}
+            {{ paysMap[tournoi.countryId] ?? '—' }}
           </span>
         </div>
       </div>

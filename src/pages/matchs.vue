@@ -1,4 +1,3 @@
-<!-- src/pages/user/matchs.vue -->
 <template>
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-4">Mes Matchs</h1>
@@ -56,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { NuxtLink } from '#components' // si nécessaire, sinon global
+import { NuxtLink } from '#components'
 import { getMyCompetiteur } from '~/services/competiteur'
 import { getMyMatchs }      from '~/services/match'
 import { getTournois }      from '~/services/tournoi'
@@ -74,11 +73,10 @@ const tournois       = ref<Tournoi[]>([])
 
 onMounted(async () => {
   try {
-    // 1) Récupère d'abord le profil compétiteur
+    // 1) Profil compétiteur
     try {
       myCompetiteur.value = await getMyCompetiteur()
     } catch (e: any) {
-      // Si c'est un 404, le profil n'existe pas encore
       if (e?.message?.includes('404')) {
         noProfile.value = true
         return
@@ -86,7 +84,7 @@ onMounted(async () => {
       throw e
     }
 
-    // 2) S'il existe, récupère les matchs et la liste des tournois
+    // 2) Matchs + Tournois
     const [m, t] = await Promise.all([
       getMyMatchs(),
       getTournois()
@@ -101,33 +99,33 @@ onMounted(async () => {
   }
 })
 
-// Fonctions utilitaires pour extraire score et fautes
+// Score et fautes en camelCase
 function getMyScore(m: Match): number {
   if (!myCompetiteur.value) return 0
-  return m.id_competiteur1 === myCompetiteur.value.id ? m.score1 : m.score2
+  return m.competitor1Id === myCompetiteur.value.id ? m.score1 : m.score2
 }
 function getOppScore(m: Match): number {
   if (!myCompetiteur.value) return 0
-  return m.id_competiteur1 === myCompetiteur.value.id ? m.score2 : m.score1
+  return m.competitor1Id === myCompetiteur.value.id ? m.score2 : m.score1
 }
 function getMyFaults(m: Match): number {
   if (!myCompetiteur.value) return 0
-  return m.id_competiteur1 === myCompetiteur.value.id
-    ? m.keikoku_competiteur1
-    : m.keikoku_competiteur2
+  return m.competitor1Id === myCompetiteur.value.id
+    ? m.keikokuCompetiteur1
+    : m.keikokuCompetiteur2
 }
 
-// Grouper les matchs par tournoi
+// Grouper par tournoi via tournoiId
 const groups = computed(() => {
   return tournois.value
     .map(tr => ({
       tournoi: tr,
-      matchs: matchs.value.filter(m => m.id_tournoi === tr.id)
+      matchs: matchs.value.filter(m => m.tournoiId === tr.id)
     }))
     .filter(g => g.matchs.length > 0)
 })
 
-// Calcul des stats pour un groupe de matchs
+// Stats inchangées
 function stats(matchList: Match[]) {
   if (!myCompetiteur.value || matchList.length === 0) {
     return { avgPoints: 0, avgFaults: 0, wins: 0, losses: 0 }

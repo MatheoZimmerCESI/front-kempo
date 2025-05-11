@@ -1,4 +1,3 @@
-// src/services/club.ts
 import { useApi } from '~/components/auth/useApi'
 import type { Club } from '~/types/club'
 

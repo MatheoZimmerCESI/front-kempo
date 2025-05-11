@@ -1,4 +1,3 @@
-// src/services/grade.ts
 import { useApi } from '~/components/auth/useApi'
 import type { Grade } from '~/types/grade'
 
@@ -38,4 +37,19 @@ export const updateGrade = (
   id: number,
   data: Partial<Grade>
 ): Promise<{ success: boolean }> => {
-  const
+  const api = useApi()
+  return api<{ success: boolean }>(`/grade/${id}`, {
+    method: 'PUT',
+    body: data,
+  })
+}
+
+/**
+ * Supprime un grade.
+ */
+export const deleteGrade = (id: number): Promise<{ success: boolean }> => {
+  const api = useApi()
+  return api<{ success: boolean }>(`/grade/${id}`, {
+    method: 'DELETE',
+  })
+}
