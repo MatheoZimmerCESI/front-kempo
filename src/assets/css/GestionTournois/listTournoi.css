@@ -1,54 +1,59 @@
 .list-tournois {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.25rem;
-    padding: 1rem 0;
-  }
-  
-  .no-data {
-    text-align: center;
-    color: var(--u-text-muted);
-    margin-top: 2rem;
-  }
-  
-  .tournoi-card {
-    padding: 1rem;
-  }
-  
-  .tournoi-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .tournoi-nom {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  
-  .tournoi-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .tournoi-details {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .detail-item {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .detail-label {
-    font-weight: 600;
-    color: var(--u-text-secondary);
-  }
-  
-  .detail-value {
-    color: var(--u-text-primary);
-  }
+  display: grid;
+  /* Deux colonnes égales */
+  grid-template-columns: repeat(2, 1fr);
+  /* Centrer l’ensemble si l’espace est plus large que la grille */
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+}
+
+.no-data {
+  text-align: center;
+  color: var(--u-text-muted);
+  margin-top: 2rem;
+}
+
+.tournoi-card {
+  /* On supprime la contrainte de padding dans la carte même */
+  /* Si tu veux une marge interne, conserve `padding: 1rem;` ici */
+  padding: 1rem;
+}
+
+.tournoi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tournoi-nom {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.tournoi-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tournoi-details {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--u-text-secondary);
+}
+
+.detail-value {
+  color: var(--u-text-primary);
+}

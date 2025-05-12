@@ -17,25 +17,25 @@
       </UFormField>
 
       <!-- Date de début -->
-      <UFormField label="Date de début *" name="date_debut">
+      <UFormField label="Date de début *" name="dateDebut">
         <UPopover placement="bottom-start">
           <UButton color="neutral" variant="outline" icon="i-lucide-calendar">
             {{ dateDebutLabel }}
           </UButton>
           <template #content>
-            <UCalendar v-model="formState.date_debut" class="p-2" />
+            <UCalendar v-model="formState.dateDebut" class="p-2" />
           </template>
         </UPopover>
       </UFormField>
 
       <!-- Date de fin -->
-      <UFormField label="Date de fin *" name="date_fin">
+      <UFormField label="Date de fin *" name="dateFin">
         <UPopover placement="bottom-start">
           <UButton color="neutral" variant="outline" icon="i-lucide-calendar">
             {{ dateFinLabel }}
           </UButton>
           <template #content>
-            <UCalendar v-model="formState.date_fin" class="p-2" />
+            <UCalendar v-model="formState.dateFin" class="p-2" />
           </template>
         </UPopover>
       </UFormField>
@@ -50,41 +50,48 @@
       </UFormField>
 
       <!-- Catégorie -->
-      <UFormField label="Catégorie *" name="id_categorie">
+      <UFormField label="Catégorie *" name="categorieId">
         <USelect
-          v-model="formState.id_categorie"
+          v-model="formState.categorieId"
           :items="categoriesOptions"
           placeholder="Sélectionnez une catégorie"
+          filterable
+          search
+          clearable
         />
       </UFormField>
 
       <!-- Pays -->
-      <UFormField label="Pays *" name="id_pays">
-        <UInput
-          type="number"
-          v-model.number="formState.id_pays"
-          placeholder="Ex : 33"
-          min="1"
+      <UFormField label="Pays *" name="countryId">
+        <USelect
+          v-model="formState.countryId"
+          :items="countriesOptions"
+          placeholder="Sélectionnez un pays"
+          filterable
+          search
+          clearable
         />
       </UFormField>
     </div>
 
     <div class="form-buttons">
       <UButton type="submit" color="primary">
-        {{ submitLabel }}
+        {{ submitLabel || 'Enregistrer' }}
       </UButton>
     </div>
   </UForm>
 </template>
 
 <script setup lang="ts">
-// import { reactive, computed, onMounted, ref } from 'vue'
 import * as v from 'valibot'
-import { DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
-import type { CalendarDate, AnyCalendarDate } from '@internationalized/date'
-// import { getCategories } from '@/services/categorie'
-// import type { Categorie } from '~/types/categorie'
-// import type { Tournoi } from '~/types/tournoi'
+import { parseDate, type DateValue } from '@internationalized/date'
+import { ref, reactive, computed, onMounted } from 'vue'
+// NuxtUI components auto-import
+import { getCategories } from '~/services/categorie'
+import { getPays } from '~/services/pays'
+import type { Categorie } from '~/types/categorie'
+import type { Pays } from '~/types/pays'
+import type { Tournoi } from '~/types/tournoi'
 
 // Props & emits
 const props = defineProps<{
@@ -93,75 +100,67 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ (e: 'submitted', data: Tournoi): void }>()
 
-// Date formatter FR
-const df = new DateFormatter('fr-FR', { dateStyle: 'medium' })
-
 // Options de format
 const eliminationOptions = [
   { label: 'Élimination directe', value: 'directe' },
   { label: 'Poule', value: 'poule' }
 ]
 
-// Validation Valibot
+// Validation Valibot (dates gérées manuellement)
 const schema = v.object({
   nom: v.pipe(v.string(), v.minLength(1, 'Le nom est requis')),
   lieu: v.pipe(v.string(), v.minLength(1, 'Le lieu est requis')),
   systemeElimination: v.pipe(v.string(), v.minLength(1, 'Sélectionner un format')),
-  id_categorie: v.pipe(v.number(), v.minValue(1, 'Sélectionner une catégorie')),
-  id_pays: v.pipe(v.number(), v.minValue(1, 'ID pays invalide'))
+  categorieId: v.pipe(v.number(), v.minValue(1, 'Sélectionner une catégorie')),
+  countryId: v.pipe(v.number(), v.minValue(1, 'Sélectionner un pays'))
 })
+
 type Schema = v.InferOutput<typeof schema>
 
 // FormState
-type FormState = Omit<Tournoi, 'date_debut' | 'date_fin'> & {
-  date_debut: AnyCalendarDate | null
-  date_fin:   AnyCalendarDate | null
+type FormState = Omit<Tournoi, 'dateDebut' | 'dateFin'> & {
+  // Date types for UCalendar binding
+  dateDebut: any
+  dateFin:   any
 }
 
+
 const formState = reactive<FormState>({
-  id:               props.initialData?.id,
-  nom:              props.initialData?.nom ?? '',
-  lieu:             props.initialData?.lieu ?? '',
+  id:                props.initialData?.id,
+  nom:               props.initialData?.nom ?? '',
+  lieu:              props.initialData?.lieu ?? '',
   systemeElimination: props.initialData?.systemeElimination ?? '',
-  id_categorie:     props.initialData?.id_categorie ?? 0,
-  id_pays:          props.initialData?.id_pays ?? 0,
-  date_debut:       props.initialData
-    ? (parseDate(props.initialData.date_debut) as AnyCalendarDate)
-    : null,
-  date_fin:         props.initialData
-    ? (parseDate(props.initialData.date_fin) as AnyCalendarDate)
-    : null
+  categorieId:       props.initialData?.categorieId ?? 0,
+  countryId:         props.initialData?.countryId ?? 0,
+  dateDebut:         props.initialData ? parseDate(props.initialData.dateDebut) : null,
+  dateFin:           props.initialData ? parseDate(props.initialData.dateFin)   : null
 })
 
-// Date labels
-const dateDebutLabel = computed(() =>
-  formState.date_debut
-    ? df.format((formState.date_debut as CalendarDate).toDate(getLocalTimeZone()))
-    : 'Choisir une date'
-)
-const dateFinLabel = computed(() =>
-  formState.date_fin
-    ? df.format((formState.date_fin as CalendarDate).toDate(getLocalTimeZone()))
-    : 'Choisir une date'
-)
+// Labels dates
+function formatJsDate(val: DateValue | null): string {
+  if (!val) return ''
+  const { year, month, day } = val as any
+  return `${day.toString().padStart(2,'0')}/${month.toString().padStart(2,'0')}/${year}`
+}
+const dateDebutLabel = computed(() => formState.dateDebut ? formatJsDate(formState.dateDebut) : 'Choisir une date')
+const dateFinLabel   = computed(() => formState.dateFin   ? formatJsDate(formState.dateFin)   : 'Choisir une date')
 
-// Chargement des catégories
+// Options catégories & pays
 const categories = ref<Categorie[]>([])
-const categoriesOptions = computed(() =>
-  categories.value.map(c => ({ label: c.nom, value: c.id! }))
-)
+const countries  = ref<Pays[]>([])
+const categoriesOptions = computed(() => categories.value.map(c => ({ label: c.nom, value: c.id! })))
+const countriesOptions  = computed(() => countries.value.map(p => ({ label: p.name, value: p.id! })))
+
 onMounted(async () => {
-  const res = await getCategories()
-  if (res) categories.value = res
+  categories.value = await getCategories()
+  countries.value  = await getPays()
 })
 
-// Convertit AnyCalendarDate → ISO
-function toIsoDate(cal: AnyCalendarDate | null): string {
-  if (!cal) return ''
-  const yyyy = cal.year.toString().padStart(4, '0')
-  const mm   = cal.month.toString().padStart(2, '0')
-  const dd   = cal.day.toString().padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
+// Convertit DateValue → ISO
+function toIsoDate(val: DateValue | null): string {
+  if (!val) return ''
+  const { year, month, day } = val as any
+  return `${year.toString().padStart(4,'0')}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`
 }
 
 // Soumission
@@ -171,10 +170,10 @@ function handleSubmit({ data }: { data: Schema }) {
     nom:               formState.nom,
     lieu:              formState.lieu,
     systemeElimination: formState.systemeElimination,
-    id_categorie:      formState.id_categorie,
-    id_pays:           formState.id_pays,
-    date_debut:        toIsoDate(formState.date_debut),
-    date_fin:          toIsoDate(formState.date_fin)
+    categorieId:       formState.categorieId,
+    countryId:         formState.countryId,
+    dateDebut:         toIsoDate(formState.dateDebut),
+    dateFin:           toIsoDate(formState.dateFin)
   }
   emit('submitted', payload)
 }

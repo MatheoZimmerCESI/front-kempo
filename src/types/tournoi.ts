@@ -7,5 +7,5 @@ export interface Tournoi {
 	systemeElimination: string;
 	categorieId: number;
 	countryId: number;
-  }
+  } 
   

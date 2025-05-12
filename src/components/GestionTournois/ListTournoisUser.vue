@@ -34,15 +34,11 @@
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Catégorie :</span>
-          <span class="detail-value">
-            {{ categorieMap[tournoi.categorieId] ?? '—' }}
-          </span>
+          <span class="detail-value">{{ categorieMap[tournoi.categorieId] ?? '—' }}</span>
         </div>
         <div class="detail-item flex">
           <span class="detail-label w-40 font-medium">Pays :</span>
-          <span class="detail-value">
-            {{ paysMap[tournoi.countryId] ?? '—' }}
-          </span>
+          <span class="detail-value">{{ paysMap[tournoi.countryId] ?? '—' }}</span>
         </div>
       </div>
     </UCard>
@@ -60,20 +56,22 @@ import type { Pays } from '~/types/pays'
 import '~/assets/css/GestionTournois/listTournoi.css'
 
 // États
-const tournois   = ref<Tournoi[]>([])
-const categories = ref<Categorie[]>([])
-const pays       = ref<Pays[]>([])
+const tournois     = ref<Tournoi[]>([])
+const categories   = ref<Categorie[]>([])
+const pays         = ref<Pays[]>([])
 const categorieMap = reactive<Record<number, string>>({})
 const paysMap      = reactive<Record<number, string>>({})
 
 // Charge tournois
 async function refreshTournois() {
   tournois.value = await getTournois()
+  console.log('Tournois chargés :', tournois.value)
 }
 
 // Charge catégories et construit le map
 async function refreshCategories() {
   categories.value = await getCategories()
+  console.log('Catégories chargées :', categories.value)
   Object.keys(categorieMap).forEach(k => delete categorieMap[+k])
   categories.value.forEach(c => {
     if (c.id != null) categorieMap[c.id] = c.nom
@@ -83,6 +81,7 @@ async function refreshCategories() {
 // Charge pays et construit le map
 async function refreshPays() {
   pays.value = await getPays()
+  console.log('Pays chargés :', pays.value)
   Object.keys(paysMap).forEach(k => delete paysMap[+k])
   pays.value.forEach(p => {
     if (p.id != null) paysMap[p.id] = p.name
@@ -102,9 +101,9 @@ onMounted(async () => {
 function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '—'
   return new Date(dateStr).toLocaleDateString('fr-FR', {
-    year: 'numeric',
+    year:  'numeric',
     month: 'long',
-    day: 'numeric'
+    day:   'numeric'
   })
 }
 </script>
