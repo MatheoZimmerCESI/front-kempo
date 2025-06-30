@@ -3,6 +3,14 @@ export default defineNuxtConfig({
   // Répertoire source
   srcDir: 'src/',
 
+  // Activation du SSR (obligatoire pour Railway)
+  ssr: true,
+
+  // Utilisation du preset Node pour Railway
+  nitro: {
+    preset: 'node-server'
+  },
+
   // Compatibilité
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
@@ -11,11 +19,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui'
   ],
-    css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
 
   // Configuration de Nuxt UI
   ui: {
-    prefix: 'U',     // Composants : <UCard>, <UButton>, etc.
+    prefix: 'U',
     fonts: true,
     colorMode: true
   },
